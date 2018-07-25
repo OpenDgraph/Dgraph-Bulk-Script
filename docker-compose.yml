@@ -1,0 +1,47 @@
+version: '3.2'
+services:
+  zero:
+    image: 'dgraph/dgraph:v1.0.7'
+    volumes:
+      - type: volume
+        source: dgraph
+        target: /dgraph
+        volume:
+          nocopy: true
+    ports:
+      - '5080:5080'
+      - '6080:6080'
+    restart: on-failure
+    command: 'dgraph zero --bindall=true --my=192.168.99.100:5080'
+  server:
+    image: 'dgraph/dgraph:v1.0.7'
+    depends_on:
+      - zero
+    volumes:
+      - './${pwd}:/dgraph/service'
+      - type: volume
+        source: dgraph
+        target: /dgraph
+        volume:
+          nocopy: true
+    ports:
+      - 8080:8080
+      - 7080:7080
+      - 9080:9080
+    tty: true
+    restart: on-failure
+    command: 'sh ./service/bulk-it-or-not-bulk-it.sh'
+  ratel:
+    image: dgraph/dgraph:v1.0.7
+    volumes:
+      - type: volume
+        source: dgraph
+        target: /dgraph
+        volume:
+          nocopy: true
+    ports:
+      - 8000:8000
+    command: dgraph-ratel
+volumes:
+  dgraph:
+    driver: local
