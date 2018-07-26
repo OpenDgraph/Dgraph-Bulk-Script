@@ -6,14 +6,22 @@ Well, the script is simple and will do everything for you if you copy this repo 
 
 There is not much secret in this script. If you need to copy feel free to create a flow for your project.
 
-Attention! Before using modify these parameters in bulk-it-or-not-bulk-it.sh
+Attention! Before using modify the vars using 
+
+````
+> # sh ./cook-a-bulk.sh
+````
+
+With /cook-a-bulk.sh you'll be able to modify the docker-compose and the vars in one shot! xD
+Just run and accept or decline the questions.
 
 ````
 my_server=192.168.99.100:7080 #if you use "localhost:7080"
 my_zero=192.168.99.100:5080 #if you use "localhost:5080"
-
 my_server_memory=2048
+dgraphVersion=v1.0.7
 ````
+
 OBS: This PJ was made on MacOS (Darwin), to work on other systems few things need to be modified. For example, Docker-compose may work differently on Windows as the volume paths.
 
 ## commands "copy paste":

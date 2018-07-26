@@ -2,28 +2,30 @@
 
 service_loc="service"
 DIR="./out/0"
-USER=who
 
-# SCHEMA="./1million.schema"
-# RDFFILE="./1million.rdf.gz"
+THIS_DIR=`dirname $0`
+source $THIS_DIR/set-of-vars.sh
+
+echo "$THIS_DIR THIS_DIR"
+echo "$dgraphVersion dgraphVersion"
 
 SCHEMA="./${service_loc}/1million.schema"
 RDFFILE="./${service_loc}/1million.rdf.gz"
 
 
-my_server=192.168.99.100:7080
-my_zero=192.168.99.100:5080
-my_server_memory=2048
+my_server=${addrHost}:7080
+my_zero=${addrHost}:${zeroPort}
+
 
 my_server_p_0=${DIR}/p
 
-ls -la ./service
 
 echo "========================================="
 echo "Log of Vars"
 echo "========================================="
 
-echo "User $USER"
+ls -la .
+
 echo "Current ==> Location $(pwd)"
 
 echo "DIR DIR"
@@ -89,6 +91,7 @@ echo "========================================="
       return 0
       else
        echo "You neet to provide a RDF and a Schema file"
+      return 1
     fi
   }
 

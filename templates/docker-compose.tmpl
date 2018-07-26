@@ -1,7 +1,7 @@
 version: '3.2'
 services:
   zero:
-    image: 'dgraph/dgraph:v1.0.7'
+    image: 'dgraph/dgraph:${dgraphVersion}'
     volumes:
       - type: volume
         source: dgraph
@@ -9,16 +9,16 @@ services:
         volume:
           nocopy: true
     ports:
-      - '5080:5080'
+      - '${zeroPort}:${zeroPort}'
       - '6080:6080'
     restart: on-failure
-    command: 'dgraph zero --bindall=true --my=192.168.99.100:5080'
+    command: 'dgraph zero --bindall=$bindall --my=${addrHost}:${zeroPort}'
   server:
-    image: 'dgraph/dgraph:v1.0.7'
+    image: 'dgraph/dgraph:${dgraphVersion}'
     depends_on:
       - zero
     volumes:
-      - './${pwd}/service:/dgraph/service'
+      - '$LocalPath/service:/dgraph/service'
       - type: volume
         source: dgraph
         target: /dgraph
@@ -32,7 +32,7 @@ services:
     restart: on-failure
     command: 'bash ./service/bulk-it-or-not-bulk-it.sh'
   ratel:
-    image: 'dgraph/dgraph:v1.0.7'
+    image: 'dgraph/dgraph:${dgraphVersion}'
     volumes:
       - type: volume
         source: dgraph
