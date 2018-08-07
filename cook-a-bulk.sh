@@ -123,7 +123,7 @@ done
 
  generate_docker_compose () {
   echo "#### Creating docker-compose ..."
-  render_template ./templates/docker-compose.tmpl > ./docker-compose.yml
+  render_template ./templates/docker-compose.yaml > ./docker-compose.yml
 }
 
  generate_bulk_script () {
