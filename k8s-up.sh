@@ -13,6 +13,14 @@ echo "================================================"
 echo ''
 echo ''
 }
+
+ add_lock () {
+     #Todo prepare locks to be delivered
+    echo 'touch done0.lock & touch done1.lock 
+    & touch done2.lock & touch done3.lock 
+    & touch done4.lock & touch done5.lock 
+    & touch done6.lock & touch done7.lock'
+}
  check_cluster_info () {
     echo 'Checking if you have an cluster running...'
     kubectl cluster-info
@@ -38,6 +46,16 @@ create_deployment () {
      echo 'Deploying dgraph-ha.yaml'
      kubectl create -f ./tmp/dgraph-ha.yaml
 }
+
+create_deployment_mt () {
+     echo 'Downloading dgraph-multi.yaml'
+     cd ./tmp  
+     curl -LJO https://raw.githubusercontent.com/dgraph-io/dgraph/master/contrib/config/kubernetes/dgraph-multi.yaml
+     cd ..
+     echo 'Deploying dgraph-multi.yaml'
+     kubectl create -f ./tmp/dgraph-multi.yaml
+}
+
 exec_on_pod () {
     echo '# kubectl exec -it dgraph-server-0 -- /bin/bash'
 }
@@ -53,30 +71,31 @@ get_log_from_pod () {
 }
 
 Send_RDF_to_pod (){
-echo '# kubectl cp /tmp/foo_dir <some-pod>:/tmp/bar_dir'
+    kubectl cp /tmp/foo_dir dgraph-server-0:/dgraph/
 }
 
 Copy_an_Export () {
     if  exec_export_on_pod; then
     echo 'Copyng RDF from dgraph-server-0 to tmp folder...'
      mkdir tmp
-     kubectl cp dgraph-server-0:/dgraph/export/* ./tmp/*
+     kubectl cp dgraph-server-0:/dgraph/export/ ./tmp/export/
     else
     echo ' Export Fail!'
     exit
      fi
-        if  copythen; then
-        echo ' Copy done!'
-        else
-        echo 'Are sure you are conected to you cluster? no Pods found, check your internet - exiting...'
-        exit
-      fi
+    #     if  copythen; then
+    #     echo ' Copy done!'
+    #     else
+    #     echo 'Are sure you are conected to you cluster? no Pods found, check your internet - exiting...'
+    #     exit
+    #   fi
 }
 
 Copy_an_Export_to_bulk () {
-     echo 'Copyng from kubectl to service-k8s folder...'
+     #TODO need to add here INPUT options to change the file name
      copythen (){
-     kubectl cp dgraph-server-0:/dgraph/export/dgraph-1-2018-08-04-20-50.rdf.gz ./service-k8s/myload.rdf.gz
+     echo 'Copyng from pod to service-k8s folder...'
+     kubectl cp dgraph-server-0:/dgraph/export/* ./service-k8s/*
         }
   if  copythen; then
    echo ' Copy done!'
@@ -99,7 +118,7 @@ Option3="- Run dgraph-ha.yaml with a process to BULK (Need a RDF file in service
 Option4="- Run dgraph-multi.yaml with a process to BULK (Need a RDF file in service-k8s)"
 Option5="- Just generate and copy an Export from Dgraph"
 Option6="- Copy an Export generated in Dgraph and send to /service-k8s to prepare to bulk"
-Option7="- OTHER options (Wanna bulk with our examples?)"
+Option7="- See OTHER options (Wanna bulk with our examples?)"
 
 PS3='Please enter your choice: '
 options=("${Option1}" "$Option2" "$Option3" "$Option4" "$Option5" "$Option6" "$Option7" "Quit")
@@ -108,15 +127,19 @@ do
     case $opt in
         "${Option1}")
             create_deployment
+            break
             ;;
         "$Option2")
-            echo "you chose choice 2"
+            create_deployment_mt
+            break
             ;;
         "$Option3")
             echo "you chose choice $REPLY"
+            break
             ;;
         "$Option4")
             echo "you chose choice $REPLY"
+            break
             ;;
         "$Option5")
             Copy_an_Export
@@ -126,8 +149,64 @@ do
             Copy_an_Export_to_bulk
             break
             ;;
-        "$Option6")
+        "$Option7")
+            Prepare_Launch_other
+            break
+            ;;
+        "Quit")
+            break
+            ;;
+        *) echo "invalid option $REPLY";;
+    esac
+done
+}
+
+
+    Prepare_Launch_other () {
+    echo "================================================"
+    echo "        Prepare for Launch T- 00:04:00.   Pad B "
+    echo "================================================"
+
+Option8="- Run a LiveLoad locally with your Cluster"
+Option9="- Run a LiveLoad on Cluster with local RDF"
+Option10="- Run a LiveLoad on Cluster with RDF example from Dgraph"
+Option11="- Run dgraph-multi.yaml with a process to BULK (Need a RDF file in service-k8s)"
+Option12="- Just generate and copy an Export from Dgraph"
+Option13="- Copy an Export generated in Dgraph and send to /service-k8s to prepare to bulk"
+Option14="- OTHER options (Wanna bulk with our examples?)"
+
+PS3='Please enter your choice: '
+options=("${Option8}" "$Option9" "$Option10" "$Option11" "$Option12" "$Option13" "$Option14" "Quit")
+select opt in "${options[@]}"
+do
+    case $opt in
+        "${Option1}")
+            create_deployment
+            break
+            ;;
+        "$Option2")
             echo "you chose choice $REPLY"
+            break
+            ;;
+        "$Option3")
+            echo "you chose choice $REPLY"
+            break
+            ;;
+        "$Option4")
+            echo "you chose choice $REPLY"
+            break
+            ;;
+        "$Option5")
+            Copy_an_Export
+            break
+            ;;
+        "$Option6")
+            Copy_an_Export_to_bulk
+            break
+            ;;
+        "$Option7")
+            echo "you chose choice $REPLY"
+            break
             ;;
         "Quit")
             break
@@ -148,10 +227,23 @@ questione_it_k8s () {
 done
 }
 
+some_more () {
+    while true; do
+    read -p "Do you wanna do something else? " yn
+    case $yn in
+        [Yy]* ) Prepare_Launch; continue;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
+}
+
 main (){
  if check_cluster; then
    questione_it_k8s
    Prepare_Launch
+   some_more
  fi
 }
 
