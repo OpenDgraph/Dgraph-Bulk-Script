@@ -1,10 +1,16 @@
 #!/bin/sh
 
+#TODO FIX THE YAML PORTS, they are "strings" for K8s, they don't like tho.
+
+DATE=$(date +'%Y-%m-%d')
+
 echo "================================================"
 echo "     Welcome to Dgraph Launch Pad for k8s.      "
 echo "================================================"
+echo "================= $DATE ==================="
 echo "================================================"
 echo ''
+
 check_cluster () {
     echo 'Checking if you have an cluster running...'
 echo "================== Config ======================"
@@ -14,6 +20,43 @@ echo ''
 echo ''
 }
 
+ check_cluster_info () {
+    echo 'Checking if you have an cluster running...'
+    kubectl cluster-info
+}
+ check_nodes () {
+        checknodes () {
+            kubectl get nodes
+        }
+    if  checknodes; then
+        echo 'checknodes true'
+        echo ''
+    else
+    echo 'Are sure you have any deployments on your cluster? no Nodes found, exiting...'
+    exit
+    fi
+}
+
+create_deployment () {
+    #  echo 'Downloading dgraph-ha.yaml'
+    #  cd ./tmp
+    # #  curl -LJO https://raw.githubusercontent.com/dgraph-io/dgraph/master/contrib/config/kubernetes/dgraph-ha.yaml
+    #  cd ..
+     echo 'Deploying dgraph-ha.yaml'
+     kubectl create -f https://raw.githubusercontent.com/dgraph-io/dgraph/master/contrib/config/kubernetes/dgraph-ha.yaml
+    #  kubectl create -f ./tmp/dgraph-ha.yaml
+}
+
+create_deployment_mt () {
+    #  echo 'Downloading dgraph-multi.yaml'
+    #  cd ./tmp  
+    #  curl -LJO https://raw.githubusercontent.com/dgraph-io/dgraph/master/contrib/config/kubernetes/dgraph-multi.yaml
+    #  cd ..
+     echo 'Deploying dgraph-multi.yaml'
+     kubectl create -f https://raw.githubusercontent.com/dgraph-io/dgraph/master/contrib/config/kubernetes/dgraph-multi.yaml
+    #  kubectl create -f ./tmp/dgraph-multi.yaml
+}
+
  add_lock () {
      #Todo prepare locks to be delivered
     echo 'touch done0.lock & touch done1.lock 
@@ -21,39 +64,89 @@ echo ''
     & touch done4.lock & touch done5.lock 
     & touch done6.lock & touch done7.lock'
 }
- check_cluster_info () {
-    echo 'Checking if you have an cluster running...'
-    kubectl cluster-info
-}
- check_nodes () {
-    checknodes () {
-        kubectl get nodes
+
+ Att(){
+    echo "################################"
+    echo 'if you see "dgraph-server-public" already exists - DON NOT continue'
+    echo 'you need a clean cluster immediately'
+    echo "################################"
+    sleep 4;
+ }
+
+
+check_dpl() {
+    runIT(){
+        echo "Please Wait..."
+        sleep 10;
+        kubectl get -f dgraph-ha.yaml
     }
- if  checknodes; then
-     echo 'checknodes true'
-     echo ''
-   else
-   echo 'Are sure you have any deployments on your cluster? no Nodes found, exiting...'
-   exit
-fi
+    runIT
+    while true; do
+    read -p "So, are all dgraph-server and dgraph-zero pods ready? Make sure (see DESIRED for CURRENT)" yn
+    case $yn in
+        [Yy]* ) return 0; break;;
+        [Nn]* ) runIT; continue;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done    
+    # kubectl wait --for=condition=available --timeout=60s 
+#   for node in $nodes; do
+#   echo "Node: $node"
+#   kubectl describe node "$node" | sed '1,/Non-terminated Pods/d'
+#   echo
+# done
+return 1
 }
 
-create_deployment () {
-     echo 'Downloading dgraph-ha.yaml'
-     cd ./tmp  
-     curl -LJO https://raw.githubusercontent.com/dgraph-io/dgraph/master/contrib/config/kubernetes/dgraph-ha.yaml
-     cd ..
-     echo 'Deploying dgraph-ha.yaml'
-     kubectl create -f ./tmp/dgraph-ha.yaml
+k8s_dpl() {
+  kubectl create -f ./service-k8s/dgraph-ha-with-bulk.yaml
+  Att
 }
 
-create_deployment_mt () {
-     echo 'Downloading dgraph-multi.yaml'
-     cd ./tmp  
-     curl -LJO https://raw.githubusercontent.com/dgraph-io/dgraph/master/contrib/config/kubernetes/dgraph-multi.yaml
-     cd ..
-     echo 'Deploying dgraph-multi.yaml'
-     kubectl create -f ./tmp/dgraph-multi.yaml
+ warningServer() {
+    echo "################################"
+    echo "Attention: You need to set a clean Cluster to continue this process"
+    echo "Please, delete your kubernetes previous deployments"
+    echo "################################"
+}
+
+questione_about_Server () {
+    while true; do
+    read -p "Are you sure that want continue? Observe that you need a clean cluster from this point" yn
+    case $yn in
+        [Yy]* ) return 0; break;;
+        [Nn]* ) warningServer; break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+}
+
+Send_RDF_to_pods (){
+    kubectl cp ./service-k8s/ dgraph-server-0:/dgraph/
+}
+
+create_deployment_with_bulk () {
+    echo "Checking RDF files on service-k8s..."
+    sleep 1;
+        if [ -f ./service-k8s/*.gz ]; then
+        if questione_about_Server; then
+        k8s_dpl
+        echo "Wait for k8s to be ready..."
+        sleep 2;
+            if check_dpl; then
+            echo "Sending service-k8s folder to all pods" & sleep 6; echo "wait"
+            Send_RDF_to_pods
+            echo "Sucesso"
+            fi
+        fi
+        return 0
+        else
+        echo "No gz file found, seems you don't have any RDF ready"
+        sleep 1;
+        warningRDF
+        return 1
+    fi
+        
 }
 
 exec_on_pod () {
@@ -68,10 +161,6 @@ exec_export_on_pod () {
 
 get_log_from_pod () {
      echo 'kubectl logs $POD_NAME'
-}
-
-Send_RDF_to_pod (){
-    kubectl cp /tmp/foo_dir dgraph-server-0:/dgraph/
 }
 
 Copy_an_Export () {
@@ -95,7 +184,7 @@ Copy_an_Export_to_bulk () {
      #TODO need to add here INPUT options to change the file name
      copythen (){
      echo 'Copyng from pod to service-k8s folder...'
-     kubectl cp dgraph-server-0:/dgraph/export/* ./service-k8s/*
+     kubectl cp dgraph-server-0:/dgraph/export/ ./service-k8s/
         }
   if  copythen; then
    echo ' Copy done!'
@@ -106,6 +195,25 @@ Copy_an_Export_to_bulk () {
     exit
 fi
 }
+
+ warningRDF() {
+    echo "################################"
+    echo "Attention: You need to set a RDF file to continue this process"
+    echo "Please, choose Option 1 or export some RDF, or try Option 6"
+    echo "################################"
+}
+
+questione_about_RDF () {
+    while true; do
+    read -p "Do you have a RDF file ready in service folder? (or service-k8s in case)" yn
+    case $yn in
+        [Yy]* ) return 0; break;;
+        [Nn]* ) warningRDF; break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+}
+
 
     Prepare_Launch () {
     echo "================================================"
@@ -134,11 +242,16 @@ do
             break
             ;;
         "$Option3")
-            echo "you chose choice $REPLY"
+         if questione_about_RDF; then
+            
+            create_deployment_with_bulk
+         fi
             break
             ;;
         "$Option4")
-            echo "you chose choice $REPLY"
+         if questione_about_RDF; then
+            echo test
+         fi
             break
             ;;
         "$Option5")
@@ -180,31 +293,31 @@ options=("${Option8}" "$Option9" "$Option10" "$Option11" "$Option12" "$Option13"
 select opt in "${options[@]}"
 do
     case $opt in
-        "${Option1}")
-            create_deployment
-            break
-            ;;
-        "$Option2")
+        "${Option8}")
             echo "you chose choice $REPLY"
             break
             ;;
-        "$Option3")
+        "$Option9")
             echo "you chose choice $REPLY"
             break
             ;;
-        "$Option4")
+        "$Option10")
             echo "you chose choice $REPLY"
             break
             ;;
-        "$Option5")
-            Copy_an_Export
+        "$Option11")
+            echo "you chose choice $REPLY"
             break
             ;;
-        "$Option6")
-            Copy_an_Export_to_bulk
+        "$Option12")
+            echo "you chose choice $REPLY"
             break
             ;;
-        "$Option7")
+        "$Option13")
+            echo "you chose choice $REPLY"
+            break
+            ;;
+        "$Option14")
             echo "you chose choice $REPLY"
             break
             ;;
@@ -218,7 +331,7 @@ done
 
 questione_it_k8s () {
     while true; do
-    read -p "Are these nodes connected to your system that you want to use? Do you want to continue?" yn
+    read -p "This is the current k8s context. Do you want to continue?" yn
     case $yn in
         [Yy]* ) return 0; break;;
         [Nn]* ) exit;;
