@@ -80,8 +80,8 @@ echo "========================================="
   }
 
    RUN_server () {
-      echo "Dgraph server Starting ..."
-      dgraph server --bindall=true --my=${my_server} --lru_mb=${my_server_memory} --zero=${my_zero} -p ${my_server_p_0}
+      echo "Dgraph Alpha Starting ..."
+      dgraph alpha --bindall=true --my=${my_server} --lru_mb=${my_server_memory} --zero=${my_zero} -p ${my_server_p_0}
   }
 
    RUN_BulkLoader () {
@@ -99,7 +99,7 @@ echo "========================================="
   #     return 1
   # }
   # RUN_server () {
-  #     echo "Dgraph server Starting ..."
+  #     echo "Dgraph Alpha Starting ..."
   # }
   # RUN_BulkLoader () {
   #     echo "Dgraph BulkLoader Starting..."

@@ -2,7 +2,7 @@
 
 ## A Docker-compose with .sh
 
-Well, the script is simple and will do everything for you if you copy this repo completely. It will check if the Bulk has already been performed and then decide whether to run the server or not. Shortly after the Bulk it runs the server automatically.
+Well, the script is simple and will do everything for you if you copy this repo completely. It will check if the Bulk has already been performed and then decide whether to run the Alpha or not. Shortly after the Bulk it runs the Alpha automatically.
 
 There is not much secret in this script. If you need to copy feel free to create a flow for your project.
 
@@ -45,7 +45,7 @@ or
 
 # Query for
 
-Right after the bulkload and then the server is UP. Query in Ratel for this:
+Right after the bulkload and then the Alpha is UP. Query in Ratel for this:
 
 ````
 {

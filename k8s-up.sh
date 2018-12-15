@@ -67,7 +67,7 @@ create_deployment_mt () {
 
  Att(){
     echo "################################"
-    echo 'if you see "dgraph-server-public" already exists - DON NOT continue'
+    echo 'if you see "dgraph-alpha-public" already exists - DON NOT continue'
     echo 'you need a clean cluster immediately'
     echo "################################"
     sleep 4;
@@ -82,7 +82,7 @@ check_dpl() {
     }
     runIT
     while true; do
-    read -p "So, are all dgraph-server and dgraph-zero pods ready? Make sure (see DESIRED for CURRENT)" yn
+    read -p "So, are all dgraph-alpha and dgraph-zero pods ready? Make sure (see DESIRED for CURRENT)" yn
     case $yn in
         [Yy]* ) return 0; break;;
         [Nn]* ) runIT; continue;;
@@ -122,7 +122,7 @@ done
 }
 
 Send_RDF_to_pods (){
-    kubectl cp ./service-k8s/ dgraph-server-0:/dgraph/
+    kubectl cp ./service-k8s/ dgraph-alpha-0:/dgraph/
 }
 
 create_deployment_with_bulk () {
@@ -150,12 +150,12 @@ create_deployment_with_bulk () {
 }
 
 exec_on_pod () {
-    echo '# kubectl exec -it dgraph-server-0 -- /bin/bash'
+    echo '# kubectl exec -it dgraph-alpha-0 -- /bin/bash'
 }
 
 exec_export_on_pod () {
     echo 'Working on your export file...'
-    kubectl exec dgraph-server-0 curl localhost:8080/admin/export
+    kubectl exec dgraph-alpha-0 curl localhost:8080/admin/export
     echo 'Export done!'
 }
 
@@ -165,9 +165,9 @@ get_log_from_pod () {
 
 Copy_an_Export () {
     if  exec_export_on_pod; then
-    echo 'Copyng RDF from dgraph-server-0 to tmp folder...'
+    echo 'Copyng RDF from dgraph-alpha-0 to tmp folder...'
      mkdir tmp
-     kubectl cp dgraph-server-0:/dgraph/export/ ./tmp/export/
+     kubectl cp dgraph-alpha-0:/dgraph/export/ ./tmp/export/
     else
     echo ' Export Fail!'
     exit
@@ -184,7 +184,7 @@ Copy_an_Export_to_bulk () {
      #TODO need to add here INPUT options to change the file name
      copythen (){
      echo 'Copyng from pod to service-k8s folder...'
-     kubectl cp dgraph-server-0:/dgraph/export/ ./service-k8s/
+     kubectl cp dgraph-alpha-0:/dgraph/export/ ./service-k8s/
         }
   if  copythen; then
    echo ' Copy done!'

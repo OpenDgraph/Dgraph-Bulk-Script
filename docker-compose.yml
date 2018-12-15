@@ -1,7 +1,7 @@
 version: '3.2'
 services:
   zero:
-    image: 'dgraph/dgraph:v1.0.7'
+    image: 'dgraph/dgraph:latest'
     volumes:
       - type: volume
         source: dgraph
@@ -14,7 +14,7 @@ services:
     restart: on-failure
     command: 'dgraph zero --bindall=true --my=192.168.99.100:5080'
   server:
-    image: 'dgraph/dgraph:v1.0.7'
+    image: 'dgraph/dgraph:latest'
     depends_on:
       - zero
     volumes:
@@ -32,7 +32,7 @@ services:
     restart: on-failure
     command: 'bash ./service/bulk-it-or-not-bulk-it.sh'
   ratel:
-    image: 'dgraph/dgraph:v1.0.7'
+    image: 'dgraph/dgraph:latest'
     volumes:
       - type: volume
         source: dgraph
