@@ -70,7 +70,7 @@ cook_version () {
      if [ !$dgraphVersion ];
      then
      echo 'Theres no default version'
-     dgraphVersion='v1.0.7-rc4'
+     dgraphVersion='v1.0.13'
      echo "Defining ${dgraphVersion} as default version"
      else
      echo "ure using ${dgraphVersion} version"
@@ -186,13 +186,13 @@ if questione_The_StorageType; then
 
 cook_Memory () {
      checkDFMemo () {
-     if [ !$my_server_memory ];
+     if [ !$my_alpha_memory ];
      then
      echo 'Theres no default version'
-     my_server_memory=2048
-     echo "Defining ${my_server_memory} as default memory"
+     my_alpha_memory=2048
+     echo "Defining ${my_alpha_memory} as default memory"
      else
-     echo "ure using ${my_server_memory} of memory"
+     echo "ure using ${my_alpha_memory} of memory"
      fi 
      } 
     questione_Memory () {
@@ -206,9 +206,9 @@ cook_Memory () {
 done
 }
 if questione_Memory; then
-    echo "Please enter your (default: $my_server_memory ): "
+    echo "Please enter your (default: $my_alpha_memory ): "
     read input_variableM
-    my_server_memory=${input_variableM}
+    my_alpha_memory=${input_variableM}
     echo "You defined: $input_variableM as your addr"
         else
         return 0
@@ -271,7 +271,7 @@ done
   newAddrHost=${addrHost}
   newBindall=${bindall}
   NewZeroPort=${zeroPort}
-  newMy_server_memory=${my_server_memory}
+  newMy_alpha_memory=${my_alpha_memory}
   render_template ./templates/set-of-vars.tmpl > ./service/set-of-vars.sh
     echo "#### done!"
 }
@@ -307,15 +307,15 @@ _EOF_
   newBindall=${bindall}
   NewZeroPort=${zeroPort}
   SType=${StorageType}
-  newMy_server_memory=${my_server_memory}
-  NewclipCommandServerLine5=$(gen_scrt)
+  newMy_alpha_memory=${my_alpha_memory}
+  NewclipCommandalphaLine5=$(gen_scrt)
   Thisa=''
   Thisb='"-c"'
   AWAITCMD=\'${Thisa}${Thisb}\'
   curling='curl -LJO '${DfcurlAdd}' && echo downloaded && sh ./test.sh &&'
   curling2=
   NewcurlCommand=\'${curling}\'
-#    gen_scrt > NewclipCommandServerLine5
+#    gen_scrt > NewclipCommandalphaLine5
   render_template ./templates/set-of-vars-k8s.tmpl > ./service-k8s/set-of-vars-k8s.sh
     echo "#### done!"
 }
@@ -340,7 +340,7 @@ warning() {
         new Addr Host ${addrHost}
         new Bindall ${bindall}
         New Zero Port ${zeroPort}
-        New Memory value ${my_server_memory}"
+        New Memory value ${my_alpha_memory}"
         generate_docker_compose
         generate_bulk_script
         echo "#### Everything done! go compose it up!"
@@ -356,7 +356,7 @@ warning() {
                 new Storage Type ${StorageType}
                 new Bindall ${bindall}
                 New Zero Port ${zeroPort}
-                New Memory value ${my_server_memory}"
+                New Memory value ${my_alpha_memory}"
                 generate_k8s_yaml_bulk
                 generate_k8s_bulk_script
                 echo "#### Everything done! go run k8s-up.sh!"

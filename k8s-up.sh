@@ -103,19 +103,19 @@ k8s_dpl() {
   Att
 }
 
- warningServer() {
+ warningalpha() {
     echo "################################"
     echo "Attention: You need to set a clean Cluster to continue this process"
     echo "Please, delete your kubernetes previous deployments"
     echo "################################"
 }
 
-questione_about_Server () {
+questione_about_alpha () {
     while true; do
     read -p "Are you sure that want continue? Observe that you need a clean cluster from this point" yn
     case $yn in
         [Yy]* ) return 0; break;;
-        [Nn]* ) warningServer; break;;
+        [Nn]* ) warningalpha; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
@@ -129,7 +129,7 @@ create_deployment_with_bulk () {
     echo "Checking RDF files on service-k8s..."
     sleep 1;
         if [ -f ./service-k8s/*.gz ]; then
-        if questione_about_Server; then
+        if questione_about_alpha; then
         k8s_dpl
         echo "Wait for k8s to be ready..."
         sleep 2;

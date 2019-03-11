@@ -1,6 +1,6 @@
 #!/bin/sh
 
-dgraphVersion=v1.0.11-rc4
+dgraphVersion=v1.0.13
 LocalPath='./${pwd}'
 addrHost=192.168.99.100
 
@@ -8,5 +8,5 @@ addrHost=192.168.99.100
 bindall=true
 zeroPort=5080
 
-#Server Configs
-my_server_memory=3024
+#alpha Configs
+my_alpha_memory=3024

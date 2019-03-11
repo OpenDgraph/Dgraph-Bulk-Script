@@ -13,11 +13,11 @@ SCHEMA="./${service_loc}/1million.schema"
 RDFFILE="./${service_loc}/1million.rdf.gz"
 
 
-my_server=${addrHost}:7080
+my_alpha=${addrHost}:7080
 my_zero=${addrHost}:${zeroPort}
 
 
-my_server_p_0=${DIR}/p
+my_alpha_p_0=${DIR}/p
 
 
 echo "========================================="
@@ -31,10 +31,10 @@ echo "Current ==> Location $(pwd)"
 echo "DIR DIR"
 echo "SCHEMA ${SCHEMA}"
 echo "RDFFILE ${RDFFILE}"
-echo "my_server ${my_server}"
+echo "my_alpha ${my_alpha}"
 echo "my_zero ${my_zero}"
-echo "my_server_memory ${my_server_memory}"
-echo "my_server_p_0 ${my_server_p_0}"
+echo "my_alpha_memory ${my_alpha_memory}"
+echo "my_alpha_p_0 ${my_alpha_p_0}"
 echo "========================================="
 
  check_existing_dir () {
@@ -79,9 +79,9 @@ echo "========================================="
       echo "No need for a Bulk today!"
   }
 
-   RUN_server () {
+   RUN_alpha () {
       echo "Dgraph Alpha Starting ..."
-      dgraph alpha --bindall=true --my=${my_server} --lru_mb=${my_server_memory} --zero=${my_zero} -p ${my_server_p_0}
+      dgraph alpha --bindall=true --my=${my_alpha} --lru_mb=${my_alpha_memory} --zero=${my_zero} -p ${my_alpha_p_0}
   }
 
    RUN_BulkLoader () {
@@ -98,7 +98,7 @@ echo "========================================="
   # check_existing_dir () {
   #     return 1
   # }
-  # RUN_server () {
+  # RUN_alpha () {
   #     echo "Dgraph Alpha Starting ..."
   # }
   # RUN_BulkLoader () {
@@ -107,10 +107,10 @@ echo "========================================="
 
   if check_existing_dir; then
     tell_him
-    RUN_server
+    RUN_alpha
     else
     if RUN_BulkLoader; then
-    RUN_server
+    RUN_alpha
     fi
   fi
 

@@ -12,8 +12,8 @@ services:
       - '5080:5080'
       - '6080:6080'
     restart: on-failure
-    command: 'dgraph zero --bindall=true --my=192.168.99.100:5080'
-  server:
+    command: 'dgraph zero --bindall=true --my=zero:5080'
+  alpha:
     image: 'dgraph/dgraph:latest'
     depends_on:
       - zero

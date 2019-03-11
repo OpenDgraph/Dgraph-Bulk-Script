@@ -4,7 +4,7 @@ dgraphVersion=${newDgraphVersion}
 addrHost=${newAddrHost}
 Rep0=3
 zeroPortDF=5080
-ServerReplicasDF=6
+alphaReplicasDF=6
 DfcurlAdd='https://raw.githubusercontent.com/MichelDiz/test/master/test.sh'
 
 #Zero Configs
@@ -13,14 +13,14 @@ zeroPort=${zeroPortDF}
 zeroReplicas=${Rep0}
 idxk8s=${newIdxk8s}
 serviceName='"dgraph-zero"'
-#Server Configs
-ServerReplicas=${ServerReplicasDF}
-my_server_memory=${newMy_server_memory}
+#alpha Configs
+alphaReplicas=${alphaReplicasDF}
+my_alpha_memory=${newMy_alpha_memory}
 StorageType=${SType}
 
 curlCommand=$NewcurlCommand
 
 #safe command templating
-clipCommandServerLine2=$AWAITCMD
+clipCommandalphaLine2=$AWAITCMD
 pipeCmd='|'
-clipCommandServerLine5=$NewclipCommandServerLine5
+clipCommandalphaLine5=$NewclipCommandalphaLine5

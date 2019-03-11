@@ -13,7 +13,7 @@ services:
       - '6080:6080'
     restart: on-failure
     command: 'dgraph zero --bindall=$bindall --my=${addrHost}:${zeroPort}'
-  server:
+  alpha:
     image: 'dgraph/dgraph:${dgraphVersion}'
     depends_on:
       - zero
