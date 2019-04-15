@@ -1,6 +1,6 @@
 #!/bin/sh
 
-dgraphVersion=v1.0.13
+dgraphVersion=v1.0.14
 addrHost=
 Rep0=3
 zeroPortDF=5080

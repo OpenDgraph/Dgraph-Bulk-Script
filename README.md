@@ -19,7 +19,7 @@ Just run and accept or decline the questions.
 my_alpha=alpha:7080 #if you use "localhost:7080" or 192.168.99.100:7080
 my_zero=zero:5080 #if you use "localhost:5080" or 192.168.99.100:5080
 my_alpha_memory=2048
-dgraphVersion=v1.0.13
+dgraphVersion=v1.0.14
 ````
 
 OBS: This PJ was made on MacOS (Darwin), to work on other systems few things need to be modified. For example, Docker-compose may work differently on Windows as the volume paths.
@@ -102,4 +102,4 @@ https://docs.dgraph.io/
 https://discuss.dgraph.io/
 
 
-> # PS. the docker-compose is set to use Dgraph V1.0.7
+> # PS. the docker-compose is set to use Dgraph V1.0.14

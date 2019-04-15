@@ -1,6 +1,6 @@
 #!/bin/sh
 
-dgraphVersion=v1.0.13
+dgraphVersion=v1.0.14
 LocalPath='./${pwd}'
 addrHost=192.168.99.100
 

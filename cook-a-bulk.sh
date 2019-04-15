@@ -70,7 +70,7 @@ cook_version () {
      if [ !$dgraphVersion ];
      then
      echo 'Theres no default version'
-     dgraphVersion='v1.0.13'
+     dgraphVersion='v1.0.14'
      echo "Defining ${dgraphVersion} as default version"
      else
      echo "ure using ${dgraphVersion} version"
