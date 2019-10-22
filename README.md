@@ -1,5 +1,14 @@
 # Dgraph bulkload
 
+
+## Todo
+
+- [x] Basic bulk operations.
+
+- [ ] Add multiple instances with 1 group.
+
+- [ ] Add multiple instances with multiple groups.
+
 ## A Docker-compose with .sh
 
 Well, the script is simple and will do everything for you if you copy this repo completely. It will check if the Bulk has already been performed and then decide whether to run the Alpha or not. Shortly after the Bulk it runs the Alpha automatically.
