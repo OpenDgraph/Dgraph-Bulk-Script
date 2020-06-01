@@ -79,13 +79,13 @@ createDeployment_mt () {
  }
 
 
-check_dpl() {
+checkDPL() {
     runIT(){
         echo "Please Wait..."
         sleep 10;
-        kubectl get -f dgraph-ha.yaml
+        kubectl get -f $@
     }
-    runIT
+    runIT $@
     while true; do
     read -p "So, are all dgraph-alpha and dgraph-zero pods ready? Make sure (see DESIRED for CURRENT)" yn
     case $yn in
@@ -103,8 +103,8 @@ done
 return 1
 }
 
-k8s_dpl() {
-  kubectl create -f ./service-k8s/dgraph-ha-with-bulk.yaml
+k8sDPL() {
+  kubectl create -f $@
   Att
 }
 
@@ -126,25 +126,25 @@ questione_about_alpha () {
 done
 }
 
-SendRDFToPods (){
+sendRDFToPods (){
     kubectl cp ./service-k8s/ dgraph-alpha-0:/dgraph/
 }
 
 createDeploymentWithBulk () {
-    echo "Checking RDF files on service-k8s..."
+    echo "Checking RDF files on service-k8s path..."
     sleep 1;
         if [ -f ./service-k8s/*.gz ]; then
-        if questione_about_alpha; then
-        k8s_dpl
-        echo "Wait for k8s to be ready..."
-        sleep 2;
-            if check_dpl; then
-            echo "Sending service-k8s folder to all pods" & sleep 6; echo "wait"
-            SendRDFToPods
-            echo "Sucesso"
+            if questione_about_alpha; then
+            k8sDPL "./service-k8s/dgraph-ha-with-bulk.yaml"
+            echo "Wait for k8s to be ready..."
+            sleep 2;
+                if checkDPL "./service-k8s/dgraph-ha-with-bulk.yaml"; then
+                    echo "Sending service-k8s folder to all pods" & sleep 6; echo "wait"
+                    sendRDFToPods
+                    echo "Success"
+                fi
             fi
-        fi
-        return 0
+         return 0
         else
         echo "No gz file found, seems you don't have any RDF ready"
         sleep 1;
@@ -210,7 +210,7 @@ fi
 
 questioneAboutRDF () {
     while true; do
-    read -p "Do you have a RDF file ready in service folder? (or service-k8s in case)" yn
+    read -p "Do you have a RDF file ready in service folder? (or service-k8s in this case)" yn
     case $yn in
         [Yy]* ) return 0; break;;
         [Nn]* ) warningRDF; break;;
@@ -220,7 +220,7 @@ done
 }
 
 
-    prepareLaunch () {
+prepareLaunch () {
     echo "================================================"
     echo "        Prepare for Launch T- 00:03:00.         "
     echo "================================================"
@@ -279,7 +279,7 @@ done
 }
 
 
-    prepareLaunchOther () {
+prepareLaunchOther () {
     echo "================================================"
     echo "        Prepare for Launch T- 00:04:00.   Pad B "
     echo "================================================"
