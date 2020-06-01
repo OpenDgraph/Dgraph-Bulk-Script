@@ -87,23 +87,13 @@ echo "========================================="
    RUN_BulkLoader () {
     if check_existing_RDF; then
       echo "Dgraph BulkLoader Starting..."
-      dgraph bulk -r ${RDFFILE} -s ${SCHEMA} --reduce_shards=1 --zero=${my_zero}
+      dgraph bulk -f ${RDFFILE} -s ${SCHEMA} --reduce_shards=1 --zero=${my_zero}
       return 0
       else
        echo "You neet to provide a RDF and a Schema file"
       return 1
     fi
   }
-
-  # check_existing_dir () {
-  #     return 1
-  # }
-  # RUN_alpha () {
-  #     echo "Dgraph Alpha Starting ..."
-  # }
-  # RUN_BulkLoader () {
-  #     echo "Dgraph BulkLoader Starting..."
-  # }
 
   if check_existing_dir; then
     tell_him
