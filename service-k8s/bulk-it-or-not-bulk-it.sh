@@ -1,6 +1,6 @@
 #!/bin/bash
 
-service_loc="service"
+service_loc="service-k8s"
 DIR="./out/0"
 
 THIS_DIR=`dirname $0`
@@ -9,7 +9,7 @@ source $THIS_DIR/set-of-vars.sh
 echo "$THIS_DIR THIS_DIR"
 echo "$dgraphVersion dgraphVersion"
 
-SCHEMA="./${service_loc}/1million.schema"
+SCHEMA="./${service_loc}/release.schema"
 RDFFILE="./${service_loc}/1million.rdf.gz"
 
 

@@ -1,5 +1,6 @@
 # Dgraph bulkload
 
+> It is mandatory to use "cook-a-bulk.sh". Cuz it will download the latest dataset.
 
 ## Todo
 
@@ -18,7 +19,7 @@ There is not much secret in this script. If you need to copy feel free to create
 Attention! Before using modify the vars using 
 
 ````
-> # sh ./cook-a-bulk.sh
+> bash ./cook-a-bulk.sh
 ````
 
 With /cook-a-bulk.sh you'll be able to modify the docker-compose and the vars in one shot! xD
@@ -84,7 +85,7 @@ if you need to download the RDF and use in some kind of test out (with this repo
 
 if you need to use vim create those files before
 
-````touch docker-compose.yml && touch 1million.schema ````
+````touch docker-compose.yml && touch release.schema ````
 
 
 in ".schema" just paste your schema or the 1million example.
@@ -111,4 +112,4 @@ https://docs.dgraph.io/
 https://discuss.dgraph.io/
 
 
-> # PS. the docker-compose is set to use Dgraph v1.1.0
+> # PS. the docker-compose is set to use Dgraph v20.03.2

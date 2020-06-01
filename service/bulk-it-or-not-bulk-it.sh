@@ -9,7 +9,7 @@ source $THIS_DIR/set-of-vars.sh
 echo "$THIS_DIR THIS_DIR"
 echo "$dgraphVersion dgraphVersion"
 
-SCHEMA="./${service_loc}/1million.schema"
+SCHEMA="./${service_loc}/release.schema"
 RDFFILE="./${service_loc}/1million.rdf.gz"
 
 

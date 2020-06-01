@@ -12,18 +12,27 @@ echo "================================================"
 
 
 set_vars_docker (){
-THIS_DIR=`dirname $0`
-source $THIS_DIR/service/set-of-vars.sh
-echo "Using vars for docker"
-echo "The version we are using is ==> $dgraphVersion"
+    THIS_DIR=`dirname $0`
+
+    echo "Downloading dataset to service"
+    bash $THIS_DIR/downloadDataset.sh "service"
+
+    echo "Using vars for docker"
+    source $THIS_DIR/service/set-of-vars.sh
+
+    echo "The version we are using is ==> $dgraphVersion"
 }
 
 set_vars_k8s (){
-THIS_DIR=`dirname $0`
-echo "Using vars for kubernetes"
-source $THIS_DIR/service-k8s/set-of-vars-k8s.sh
+    THIS_DIR=`dirname $0`
 
-echo "The version we are using is ==> $dgraphVersion"
+    echo "Downloading dataset to service-k8s"
+    bash $THIS_DIR/downloadDataset.sh "service-k8s"
+    
+    echo "Using vars for kubernetes"
+    source $THIS_DIR/service-k8s/set-of-vars-k8s.sh
+
+    echo "The version we are using is ==> $dgraphVersion"
 }
 
 
@@ -54,6 +63,7 @@ start_to_cook () {
     esac
 done
 }
+
 if questione_Host; then
     echo "Please enter your Docker Host IP (default: $addrHost - Don't add ports just addr or IP): "
     read input_variableH
