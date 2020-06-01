@@ -12,12 +12,17 @@ echo "================================================"
 echo ''
 
 check_cluster () {
+
+if ! hash kubectl 2>/dev/null; then
+		echo "Could not find kubectl. Please install kubectl and try again.";
+		exit 1;
+fi
     echo 'Checking if you have an cluster running...'
-echo "================== Config ======================"
-    kubectl config current-context
-echo "================================================"
-echo ''
-echo ''
+    echo "================== Config ======================"
+        kubectl config current-context
+    echo "================================================"
+    echo ''
+    echo ''
 }
 
  check_cluster_info () {
@@ -37,7 +42,7 @@ echo ''
     fi
 }
 
-create_deployment () {
+createDeployment () {
     #  echo 'Downloading dgraph-ha.yaml'
     #  cd ./tmp
     # #  curl -LJO https://raw.githubusercontent.com/dgraph-io/dgraph/master/contrib/config/kubernetes/dgraph-ha.yaml
@@ -47,7 +52,7 @@ create_deployment () {
     #  kubectl create -f ./tmp/dgraph-ha.yaml
 }
 
-create_deployment_mt () {
+createDeployment_mt () {
     #  echo 'Downloading dgraph-multi.yaml'
     #  cd ./tmp  
     #  curl -LJO https://raw.githubusercontent.com/dgraph-io/dgraph/master/contrib/config/kubernetes/dgraph-multi.yaml
@@ -67,7 +72,7 @@ create_deployment_mt () {
 
  Att(){
     echo "################################"
-    echo 'if you see "dgraph-alpha-public" already exists - DON NOT continue'
+    echo 'if you see "dgraph-alpha-public" already exists - DO NOT continue'
     echo 'you need a clean cluster immediately'
     echo "################################"
     sleep 4;
@@ -103,7 +108,7 @@ k8s_dpl() {
   Att
 }
 
- warningalpha() {
+ warningAlpha() {
     echo "################################"
     echo "Attention: You need to set a clean Cluster to continue this process"
     echo "Please, delete your kubernetes previous deployments"
@@ -115,17 +120,17 @@ questione_about_alpha () {
     read -p "Are you sure that want continue? Observe that you need a clean cluster from this point" yn
     case $yn in
         [Yy]* ) return 0; break;;
-        [Nn]* ) warningalpha; break;;
+        [Nn]* ) warningAlpha; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
 }
 
-Send_RDF_to_pods (){
+SendRDFToPods (){
     kubectl cp ./service-k8s/ dgraph-alpha-0:/dgraph/
 }
 
-create_deployment_with_bulk () {
+createDeploymentWithBulk () {
     echo "Checking RDF files on service-k8s..."
     sleep 1;
         if [ -f ./service-k8s/*.gz ]; then
@@ -135,7 +140,7 @@ create_deployment_with_bulk () {
         sleep 2;
             if check_dpl; then
             echo "Sending service-k8s folder to all pods" & sleep 6; echo "wait"
-            Send_RDF_to_pods
+            SendRDFToPods
             echo "Sucesso"
             fi
         fi
@@ -153,7 +158,7 @@ exec_on_pod () {
     echo '# kubectl exec -it dgraph-alpha-0 -- /bin/bash'
 }
 
-exec_export_on_pod () {
+execExportOnPod () {
     echo 'Working on your export file...'
     kubectl exec dgraph-alpha-0 curl localhost:8080/admin/export
     echo 'Export done!'
@@ -163,8 +168,8 @@ get_log_from_pod () {
      echo 'kubectl logs $POD_NAME'
 }
 
-Copy_an_Export () {
-    if  exec_export_on_pod; then
+copyAnExport () {
+    if  execExportOnPod; then
     echo 'Copyng RDF from dgraph-alpha-0 to tmp folder...'
      mkdir tmp
      kubectl cp dgraph-alpha-0:/dgraph/export/ ./tmp/export/
@@ -172,7 +177,7 @@ Copy_an_Export () {
     echo ' Export Fail!'
     exit
      fi
-    #     if  copythen; then
+    #     if  copyThen; then
     #     echo ' Copy done!'
     #     else
     #     echo 'Are sure you are conected to you cluster? no Pods found, check your internet - exiting...'
@@ -180,13 +185,13 @@ Copy_an_Export () {
     #   fi
 }
 
-Copy_an_Export_to_bulk () {
+copyAnExportToBulk () {
      #TODO need to add here INPUT options to change the file name
-     copythen (){
-     echo 'Copyng from pod to service-k8s folder...'
-     kubectl cp dgraph-alpha-0:/dgraph/export/ ./service-k8s/
-        }
-  if  copythen; then
+     copyThen(){
+         echo 'Copyng from pod to service-k8s folder...'
+         kubectl cp dgraph-alpha-0:/dgraph/export/ ./service-k8s/
+      }
+  if  copyThen; then
    echo ' Copy done!'
    else
     echo 'Are sure you are conected to you cluster? no Pods found, check your internet'
@@ -203,7 +208,7 @@ fi
     echo "################################"
 }
 
-questione_about_RDF () {
+questioneAboutRDF () {
     while true; do
     read -p "Do you have a RDF file ready in service folder? (or service-k8s in case)" yn
     case $yn in
@@ -215,7 +220,7 @@ done
 }
 
 
-    Prepare_Launch () {
+    prepareLaunch () {
     echo "================================================"
     echo "        Prepare for Launch T- 00:03:00.         "
     echo "================================================"
@@ -234,36 +239,35 @@ select opt in "${options[@]}"
 do
     case $opt in
         "${Option1}")
-            create_deployment
+            createDeployment
             break
             ;;
         "$Option2")
-            create_deployment_mt
+            createDeployment_mt
             break
             ;;
         "$Option3")
-         if questione_about_RDF; then
-            
-            create_deployment_with_bulk
+         if questioneAboutRDF; then
+            createDeploymentWithBulk
          fi
             break
             ;;
         "$Option4")
-         if questione_about_RDF; then
+         if questioneAboutRDF; then
             echo test
          fi
             break
             ;;
         "$Option5")
-            Copy_an_Export
+            copyAnExport
             break
             ;;
         "$Option6")
-            Copy_an_Export_to_bulk
+            copyAnExportToBulk
             break
             ;;
         "$Option7")
-            Prepare_Launch_other
+            prepareLaunchOther
             break
             ;;
         "Quit")
@@ -275,7 +279,7 @@ done
 }
 
 
-    Prepare_Launch_other () {
+    prepareLaunchOther () {
     echo "================================================"
     echo "        Prepare for Launch T- 00:04:00.   Pad B "
     echo "================================================"
@@ -340,11 +344,11 @@ questione_it_k8s () {
 done
 }
 
-some_more () {
+someMore () {
     while true; do
     read -p "Do you wanna do something else? " yn
     case $yn in
-        [Yy]* ) Prepare_Launch; continue;;
+        [Yy]* ) prepareLaunch; continue;;
         [Nn]* ) exit;;
         * ) echo "Please answer yes or no.";;
     esac
@@ -355,8 +359,8 @@ done
 main (){
  if check_cluster; then
    questione_it_k8s
-   Prepare_Launch
-   some_more
+   prepareLaunch
+   someMore
  fi
 }
 
